@@ -93,7 +93,7 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
-    - _Cutoff: 0.24
+    - _Cutoff: 0.2
     - _Cutout: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
@@ -103,7 +103,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Intensity: 0.25
+    - _Intensity: 0.27
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Offset: 0.4
@@ -128,7 +128,7 @@ Material:
     - _MultiplyColor: {r: 0.8396226, g: 0.7974525, b: 0.10693307, a: 1}
     - _Offset: {r: -0.003, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Spread: {r: -0.004, g: 0, b: 0.003, a: 0}
+    - _Spread: {r: 4, g: 4, b: 3.6, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &8584351549961885987
 MonoBehaviour:

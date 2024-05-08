@@ -1,4 +1,4 @@
-﻿Shader "Fullscreen/SSAO2D"
+﻿Shader "Hidden/SSAO2D"
 {
     Properties
     {
@@ -19,10 +19,10 @@
         {
             CGPROGRAM
             #include "UnityCG.cginc"
-            
+
             #pragma vertex vert
             #pragma fragment frag
-            
+
 
             sampler2D _CameraDepthTexture;
             half intensity;
@@ -31,23 +31,24 @@
             half cutoff;
             half threshold;
 
+            static const float referenceResolutionScale = 0.001;
             static const fixed2 samples[16] = {
-                fixed2(0.0, 1.0 * _ScreenParams.x / _ScreenParams.y),
+                fixed2(0.0, 1.0),
                 fixed2(1.0, 0.0),
-                fixed2(0.0, -1.0 * _ScreenParams.x / _ScreenParams.y),
+                fixed2(0.0, -1.0),
                 fixed2(-1.0, 0.0),
-                fixed2(0.383, 0.924 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(0.707, 0.707 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(0.924, 0.383 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(0.924, -0.383 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(0.707, -0.707 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(0.383, -0.924 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(-0.383, -0.924 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(-0.707, -0.707 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(-0.924, -0.383 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(-0.924, 0.383 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(-0.707, 0.707 * _ScreenParams.x / _ScreenParams.y),
-                fixed2(-0.383, 0.924 * _ScreenParams.x / _ScreenParams.y)
+                fixed2(0.383, 0.924),
+                fixed2(0.707, 0.707),
+                fixed2(0.924, 0.383),
+                fixed2(0.924, -0.383),
+                fixed2(0.707, -0.707),
+                fixed2(0.383, -0.924),
+                fixed2(-0.383, -0.924),
+                fixed2(-0.707, -0.707),
+                fixed2(-0.924, -0.383),
+                fixed2(-0.924, 0.383),
+                fixed2(-0.707, 0.707),
+                fixed2(-0.383, 0.924)
             };
 
             struct appdata
@@ -84,12 +85,15 @@
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed baseDepth = LinearEyeDepth(tex2D(_CameraDepthTexture, i.zuv).r);
+                float2 aspectCompensation = float2(_ScreenParams.y / _ScreenParams.x, 1.0) * referenceResolutionScale;
+                float2 uvOffset = i.uv + offset  * aspectCompensation;
 
                 fixed ambientColor = 1.0;
                 offset += i.zuv;
                 for (int s = 0; s < 16; s++)
                 {
-                    fixed diff = baseDepth - LinearEyeDepth(tex2D(_CameraDepthTexture, offset + samples[s] * spread).r);
+                    float2 sampleOffset = samples[s] * spread * aspectCompensation;
+                    fixed diff = baseDepth - LinearEyeDepth(tex2D(_CameraDepthTexture, uvOffset + sampleOffset).r);
 
                     if (diff > threshold && diff < cutoff)
                     {

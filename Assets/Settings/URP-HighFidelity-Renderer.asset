@@ -1,21 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3856882421512377843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99bb08cc0e61462eba4222bebb54113f, type: 3}
-  m_Name: SSAO2D Pass
-  m_EditorClassIdentifier: 
-  m_Active: 0
-  settings:
-    RenderPassEvent: 300
-    Material: {fileID: 2100000, guid: 48e1e522223aab9488b01f0f6811f4f0, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34,8 +18,7 @@ MonoBehaviour:
     hdrDebugViewPS: {fileID: 4800000, guid: 573620ae32aec764abd4d728906d2587, type: 3}
   m_RendererFeatures:
   - {fileID: 5831707201137272}
-  - {fileID: -3856882421512377843}
-  m_RendererFeatureMap: 786a2824e8b714000d6a4e4ddf9979ca
+  m_RendererFeatureMap: 786a2824e8b71400
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -88,12 +71,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
-  m_Name: FullScreenPassRendererFeature
+  m_Name: SSAO2D
   m_EditorClassIdentifier: 
   m_Active: 1
   injectionPoint: 450
   fetchColorBuffer: 0
-  requirements: 5
+  requirements: 1
   passMaterial: {fileID: 2100000, guid: 48e1e522223aab9488b01f0f6811f4f0, type: 2}
   passIndex: 0
   bindDepthStencilAttachment: 0

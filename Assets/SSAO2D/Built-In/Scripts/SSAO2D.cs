@@ -5,8 +5,8 @@
 public class SSAO2D : MonoBehaviour
 {
     [Range(0.0f, 1.0f)] [SerializeField] private float intensity = 0.3f;
-    [Range(0.0f, 0.1f)] [SerializeField] private float spread = 0.005f;
-    [SerializeField] private Vector2 offset = new Vector2(-0.004f, 0.004f);
+    [Range(0.0f, 0.1f)] [SerializeField] private float spread = 0.5f;
+    [SerializeField] private Vector2 offset = new Vector2(-0.4f, 0.4f);
     [Range(0.0f, 1.0f)] [SerializeField] private float cutoff = 0.1f;
 
     [Range(0.000001f, 1.0f)] [SerializeField]
@@ -20,7 +20,7 @@ public class SSAO2D : MonoBehaviour
     private static readonly int Threshold = Shader.PropertyToID("threshold");
     private static readonly int Offset = Shader.PropertyToID("offset");
 
-    private const string ShaderName = "Fullscreen/SSAO2D";
+    private const string ShaderName = "Hidden/SSAO2D";
 
     private void Start()
     {

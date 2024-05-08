@@ -2,10 +2,10 @@
 {
     Properties
     {
-        _Spread ("Spread", Vector) = (-0.004, 0, 0.003,0) // XY - Offset, Z - Spread
-        _Cutoff ("Cutoff", float) = 0.162
+        _Spread ("Spread", Vector) = (4, 4, 4, 0) // XY - Offset, Z - Spread
+        _Cutoff ("Cutoff", float) = 0.2
         _Threshold ("Threshold", float) = 0.00001
-        _Intensity ("Intensity", float) = 0.4
+        _Intensity ("Intensity", float) = 0.3
     }
     SubShader
     {
@@ -30,28 +30,29 @@
             float _Cutoff;
             float _Threshold;
 
-            TEXTURE2D_X(_CameraOpaqueTexture);
+            TEXTURE2D(_CameraOpaqueTexture);
             SAMPLER(sampler_CameraOpaqueTexture);
-            TEXTURE2D_X(_CameraDepthTexture);
+            TEXTURE2D(_CameraDepthTexture);
             SAMPLER(sampler_CameraDepthTexture);
 
+            static const float referenceResolutionScale = 0.001;
             static const float2 samples[16] = {
-                float2(0.0, 1.0 * _ScreenParams.x / _ScreenParams.y),
+                float2(0.0, 1.0),
                 float2(1.0, 0.0),
-                float2(0.0, -1.0 * _ScreenParams.x / _ScreenParams.y),
+                float2(0.0, -1.0),
                 float2(-1.0, 0.0),
-                float2(0.383, 0.924 * _ScreenParams.x / _ScreenParams.y),
-                float2(0.707, 0.707 * _ScreenParams.x / _ScreenParams.y),
-                float2(0.924, 0.383 * _ScreenParams.x / _ScreenParams.y),
-                float2(0.924, -0.383 * _ScreenParams.x / _ScreenParams.y),
-                float2(0.707, -0.707 * _ScreenParams.x / _ScreenParams.y),
-                float2(0.383, -0.924 * _ScreenParams.x / _ScreenParams.y),
-                float2(-0.383, -0.924 * _ScreenParams.x / _ScreenParams.y),
-                float2(-0.707, -0.707 * _ScreenParams.x / _ScreenParams.y),
-                float2(-0.924, -0.383 * _ScreenParams.x / _ScreenParams.y),
-                float2(-0.924, 0.383 * _ScreenParams.x / _ScreenParams.y),
-                float2(-0.707, 0.707 * _ScreenParams.x / _ScreenParams.y),
-                float2(-0.383, 0.924 * _ScreenParams.x / _ScreenParams.y)
+                float2(0.383, 0.924),
+                float2(0.707, 0.707),
+                float2(0.924, 0.383),
+                float2(0.924, -0.383),
+                float2(0.707, -0.707),
+                float2(0.383, -0.924),
+                float2(-0.383, -0.924),
+                float2(-0.707, -0.707),
+                float2(-0.924, -0.383),
+                float2(-0.924, 0.383),
+                float2(-0.707, 0.707),
+                float2(-0.383, 0.924)
             };
 
             struct appdata
@@ -64,7 +65,6 @@
             struct v2f
             {
                 float2 uv : TEXCOORD0;
-                float2 zuv : TEXCOORD1;
                 float4 vertex : SV_POSITION;
             };
 
@@ -82,33 +82,23 @@
 
                 o.vertex = pos;
                 o.uv = uv;
-                o.zuv = o.uv;
 
-                //TODO:
-                //#if UNITY_UV_STARTS_AT_TOP
-                //if (_MainTex_TexelSize.y < 0.0)
-                //{
-                //    o.zuv.y = 1.0 - o.zuv.y;
-                //}
-                //#endif
                 return o;
             }
 
-
             half4 frag(v2f i) : SV_Target
             {
-                float4 col = SAMPLE_TEXTURE2D_X(_CameraOpaqueTexture, sampler_CameraOpaqueTexture, i.uv);
-
-                float baseDepth = LinearEyeDepth(
-                    SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, i.zuv), _ZBufferParams);
-
+                float4 col = SAMPLE_TEXTURE2D(_CameraOpaqueTexture, sampler_CameraOpaqueTexture, i.uv);
+                float baseDepth = LinearEyeDepth(SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, i.uv), _ZBufferParams);
+                float2 aspectCompensation = float2(_ScreenParams.y / _ScreenParams.x, 1.0) * referenceResolutionScale;
+                float2 uvOffset = i.uv +  _Spread.xy * aspectCompensation;
                 float ambientColor = 1.0;
-                _Spread.xy += i.zuv;
                 for (int s = 0; s < 16; s++)
                 {
+                    float2 sampleOffset =samples[s] * _Spread.z * aspectCompensation;
                     float diff = baseDepth - LinearEyeDepth(
-                        SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture,
-                                         _Spread.xy + samples[s] * _Spread.z).r, _ZBufferParams);
+                        SAMPLE_TEXTURE2D(_CameraDepthTexture, sampler_CameraDepthTexture, uvOffset + sampleOffset).r,
+                        _ZBufferParams);
 
                     if (diff > _Threshold && diff < _Cutoff)
                     {
