@@ -5,7 +5,7 @@
 public class SSAO2D : MonoBehaviour
 {
     [Range(0.0f, 1.0f)] [SerializeField] private float intensity = 0.3f;
-    [Range(0.0f, 0.1f)] [SerializeField] private float spread = 0.5f;
+    [SerializeField] private float spread = 0.5f;
     [SerializeField] private Vector2 offset = new Vector2(-0.4f, 0.4f);
     [Range(0.0f, 1.0f)] [SerializeField] private float cutoff = 0.1f;
 
@@ -34,7 +34,7 @@ public class SSAO2D : MonoBehaviour
 
     private void Init()
     {
-        if (!isInitialized)
+        if (isInitialized)
         {
             return;
         }
